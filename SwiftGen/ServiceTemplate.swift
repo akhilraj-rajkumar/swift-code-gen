@@ -11,13 +11,13 @@ import ObjectMapper
 
 class $class_name : BaseWebService {
 
-    typealias successCallback = ($response_var: $response_type?) -> Void
-    typealias failureCallback = (error: NSError) -> Void
+    typealias successCallback = ($response_type?) -> Void
+    typealias failureCallback = (Error) -> Void
 
     var success:successCallback?
     var failure:failureCallback?
 
-    func $method_name($request_var onSuccess:successCallback, onFailure:failureCallback) {
+    func $method_name($request_var onSuccess:@escaping successCallback, onFailure:@escaping failureCallback) {
 
         self.success = onSuccess
         self.failure = onFailure
@@ -26,11 +26,11 @@ class $class_name : BaseWebService {
         self.parameters = $request_params
         self.startWebService({ JSON in
 
-            let response = Mapper<$response_model>().$map_type(JSON)
-            self.success?($response_var: response)
+            let response = Mapper<$response_model>().$map_type
+            self.success?(response)
             }) { error in
 
-                self.failure?(error: error!)
+                self.failure?(error!)
         }
     }
 }
