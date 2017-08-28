@@ -24,7 +24,7 @@ class $class_name : BaseWebService {
         self.urlString = "$endpoint"
         self.requestMethod = $request_type
         self.parameters = $request_params
-        self.startWebService({ JSON in
+        self.startWebService(success: { JSON in
 
             let response = Mapper<$response_model>().$map_type
             self.success?(response)

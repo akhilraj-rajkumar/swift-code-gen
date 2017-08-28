@@ -13,7 +13,7 @@ class $class_name : Mappable {
 
     $properties
 
-    required init?(_ map: Map) {
+    required init?(map: Map) {
 
     }
 
