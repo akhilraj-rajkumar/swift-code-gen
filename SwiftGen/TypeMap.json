@@ -1,0 +1,6 @@
+{
+  "int" : "NSInteger",
+  "list" : "Array",
+  "dict" : "Dictionary",
+  "unicode" : "String"
+}
