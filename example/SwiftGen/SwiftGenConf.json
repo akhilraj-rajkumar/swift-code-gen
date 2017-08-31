@@ -1,0 +1,21 @@
+{
+	"project_path": "..",
+	"apis": [{
+		"api_name": "GetUser",
+		"endpoint": "some/path/getUser",
+		"request": "",
+		"method": "GET",
+		"response": {
+			"first_name": "Akhilraj",
+			"last_name": "Rajkumar",
+			"age": "30",
+			"sex": "M"
+		},
+		"model_alias": {
+			"response": "User"
+		}
+	}],
+	"project_name": "MyProject",
+	"class_prefix": "",
+	"base_directory": "../MyProject"
+}
