@@ -60,7 +60,7 @@ The `validate` command will check the required values in configuration file and 
 To generate model and service classess as updated in configuration file (`SwiftGenConf.json`)...
 
 ```sh
-$ swiftgen gen
+$ swiftcodegen gen
 ```
 The `gen` command will generate the model classes and service classes as specified in the configuration file.
 
