@@ -20,7 +20,7 @@ $ pip install SwiftGen --update
 
 ### Usage
 
-SwiftGen uses `SwiftGenConf.json` file to keep api details and other common properties to configure basic setups. It also uses template files to generate model and service classes. A sample configuration file can be found [here](https://github.com/akhilraj-rajkumar/swift-code-gen/blob/master/SwiftGen/SwiftGenConf.json).
+SwiftGen uses `SwiftGenConf.json` file to keep api details and other common properties to configure basic setups. It also uses template files to generate model and service classes. A sample configuration file can be found [here](https://github.com/akhilraj-rajkumar/swift-code-gen#swiftgenconfjson).
 
 To initialise setup...
 ```sh
