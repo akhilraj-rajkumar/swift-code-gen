@@ -49,7 +49,7 @@ The `init` command will setup the required basic setup in the project directory.
 |  |--ServiceTemplate.swift
 |  |--TypeMap.json
 ```
-Basic values will be filled in the configuration file which can be edited to add required details. Read more on config file customisations [here]().
+Basic values will be filled in the configuration file which can be edited to add required details. Read more on config file customisations [here](https://github.com/akhilraj-rajkumar/swift-code-gen#customization).
 
 After initialisation, the configuration and setup can be validated by...
 ```sh
@@ -101,7 +101,7 @@ Note: Possible values will be prefilled on `init`, if the command is used from p
 | class_prefix | Classname prefix. |
 | apis | An array of api's. |
 
-###### `apis` customization 
+##### `apis` customization 
 In `SwiftGenConf.json` file, an array/list of values is expected for `apis` key. Each item in api list will have the following key-value pairs.
 
 | Name | Value |
@@ -113,14 +113,14 @@ In `SwiftGenConf.json` file, an array/list of values is expected for `apis` key.
 | response | Response json, it could be `[]` or `{}`.
 | model_alias | Alias name for models. Expects key-value pairs `{}`. |
 
-`endpoint` example:
+##### `endpoint` example:
 Value of endpoint is expected to be a string, with or without host part. SwiftCodeGen will only take the path par from the url. Two types of url strings are supported now,
    - "endpoint" : "some/path/getUser"
    - "endpoint" : "some/path/Users/{userId}"
  
 In the second example, userId will be added as method parameter and value will be substituted.
  
-`model_alias` example:
+##### `model_alias` example:
 Value of model_alias is expected to be key-value pairs. This is used to map a model or a part in request/response to another model.
 
 ```
@@ -170,6 +170,8 @@ In the above configuration, the `GetUser` api response will be mapped to a model
 ```
 
 Here the response of `GetUser` is mapped to `User`, so the model name will be `User`.
+
+
 Another example, consider
 ```
 {
@@ -210,4 +212,110 @@ Another example, consider
 	"base_directory": "../MyProject"
 }
 ```
-In the above sample, both update requests have same kind of request and response, since each one is provided with aliases, no seperate model's will be generated for two request. Same `UpdateRequest` model and `CommonResponse` model will be used. If the aliases are not provided, both api will generate seperate request and response models. So the alias can avoid different models with same properties.
+In the above sample, both update requests have same kind of request and response, since each one is provided with aliases, no seperate model's will be generated for two request. Same `UpdateRequest` model and `CommonResponse` model will be used. If the aliases are not provided, both api will generate seperate request and response models. So the providing alias can avoid different models with same properties.
+
+Apart from the whole request or response, any part of json can be aliased. eg:
+```
+{
+  "project_path": "..",
+  "apis": [
+    {
+      "api_name": "GetUser",
+      "endpoint": "some/path/getUser",
+      "request": "",
+      "method": "GET",
+      "response": {
+        "first_name": "Akhilraj",
+        "last_name": "Rajkumar",
+        "age": "30",
+        "sex": "M"
+      },
+      "model_alias": {
+        "response": "User"
+      }
+    },
+    {
+      "api_name": "GetContacts",
+      "endpoint": "some/path/getContacts",
+      "request": "",
+      "method": "GET",
+      "response": {
+        "contacts": [
+          {
+            "first_name": "Akhilraj",
+            "last_name": "Rajkumar",
+            "age": "30",
+            "sex": "M"
+          }
+        ]
+      },
+      "model_alias": {
+        "contacts": "User"
+      }
+    }
+  ],
+  "project_name": "MyProject",
+  "class_prefix": "",
+  "base_directory": "../MyProject"
+}
+```
+In the above example a part of response is aliased to User model. So in GetContacts response array of User model will be used.
+
+#### Template Classes
+SwiftCodeGen uses two template classes, `ModelTemplate.swift` and `ServiceTemplate.swift`. Model template uses `ObjectMapper` to map json to model. So the application require [`ObjectMapper`](https://github.com/Hearst-DD/ObjectMapper) module. Service classes are generated from ServiceTemplate which is created based on [`Alamofire`](https://github.com/Alamofire/Alamofire). The service template class is customizible as per project and imlpementation. A sample service template file will look like,
+```swift
+import Foundation
+import ObjectMapper
+
+class $class_name : BaseWebService {
+
+    typealias successCallback = ($response_type?) -> Void
+    typealias failureCallback = (Error) -> Void
+
+    var success:successCallback?
+    var failure:failureCallback?
+
+    func $method_name($request_var onSuccess:@escaping successCallback, onFailure:@escaping failureCallback) {
+
+        self.success = onSuccess
+        self.failure = onFailure
+        self.urlString = "$endpoint"
+        self.requestMethod = $request_type
+        self.parameters = $request_params
+        self.startWebService(success: { JSON in
+
+            let response = Mapper<$response_model>().$map_type
+            self.success?(response)
+            }) { error in
+
+                self.failure?(error!)
+        }
+    }
+}
+```
+This template class is created as a subclass of `BaseWebService` class. The base service class used in the example can be found [here](https://github.com/akhilraj-rajkumar/swift-code-gen/blob/master/SwiftGen/BaseWebService.swift). In the template class, values starts with `$` will be substituted with actual values generated from `SwiftGenConf.json` file. Available options are,
+
+| Name | Value |
+| ----- | ----- |
+| $response_type | This will be a model or array of model as per `response` specified in conf file. |
+| $method_name | A name for method, formed from `name` value in conf file. |
+| $request_var | This will be a model or array of model as per `request` specified in conf file. It will be empty if nothing provided in `request`. |
+| $endpoint | Endpoint url created from `endpoint` value in conf file. |
+| $request_type | Type of request like GET, POST etc configured from `method` value from conf file. |
+| $request_params | A `[String : Any]` variable created from request model using ObjectMapper. Value will be `nil` if nothing is provided in `request`. |
+| $response_model | Model name of response. |
+| $map_type | Mapping to object or oject array. |
+
+The above values will be filled to create service classes. The template file can be configured to any form and SwiftCodeGen will format and fill the above variables present in the template file. So depends on project template file can be custmized providing the above variables.
+
+### Todos
+
+ - Support GET request with URL parameters.
+ - Possible customizations.
+
+License
+----
+Apache License
+
+### Author
+Akhilraj Rajkumar - https://github.com/akhilraj-rajkumar
