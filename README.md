@@ -4,23 +4,23 @@ A command line utility to generate model and web service classes in Swift progra
 
 ### Installation
 
-SwiftGen is written in Python, and it requires python 2.7 or above to work.
+SwiftCodeGen is written in Python, and it requires python 2.7 or above to work.
 
-Install SwiftGen and use simple commands.
+Install SwiftCodeGen and use simple commands.
 
 ```sh
-$ pip install SwiftGen
+$ pip install SwiftCodeGen
 ```
 
 If you have already a version installed...
 
 ```sh
-$ pip install SwiftGen --update
+$ pip install SwiftCodeGen --upgrade
 ```
 
 ### Usage
 
-SwiftGen uses `SwiftGenConf.json` file to keep api details and other common properties to configure basic setups. It also uses template files to generate model and service classes. A sample configuration file can be found [here](https://github.com/akhilraj-rajkumar/swift-code-gen#swiftgenconfjson).
+SwiftCodeGen uses `SwiftGenConf.json` file to keep api details and other common properties to configure basic setups. It also uses template files to generate model and service classes. A sample configuration file can be found [here](https://github.com/akhilraj-rajkumar/swift-code-gen#swiftgenconfjson).
 
 To initialise setup...
 ```sh
